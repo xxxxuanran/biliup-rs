@@ -21,10 +21,10 @@ pub enum UploadLine {
     Bda2,
     Ws,
     Qn,
-    Kodo,
-    Cos,
-    CosInternal,
     Bldsa,
+    Tx,
+    Txa,
+    Bda,
 }
 
 #[derive(FromPyObject)]
@@ -96,16 +96,15 @@ pub async fn upload(studio_pre: StudioPre) -> Result<ResponseData> {
     let client = StatelessClient::default();
     let mut videos = Vec::new();
     let line = match line {
-        Some(UploadLine::Kodo) => line::kodo(),
         Some(UploadLine::Bda2) => line::bda2(),
         Some(UploadLine::Ws) => line::ws(),
         Some(UploadLine::Qn) => line::qn(),
-        Some(UploadLine::Cos) => line::cos(),
-        Some(UploadLine::CosInternal) => line::cos_internal(),
         Some(UploadLine::Bldsa) => line::bldsa(),
+        Some(UploadLine::Tx) => line::tx(),
+        Some(UploadLine::Txa) => line::txa(),
+        Some(UploadLine::Bda) => line::bda(),
         None => Probe::probe(&client.client).await.unwrap_or_default(),
     };
-    // let line = line::kodo();
     for video_path in video_path {
         println!("{:?}", video_path.canonicalize()?.to_str());
         info!("{line:?}");
