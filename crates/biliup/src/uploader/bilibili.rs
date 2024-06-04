@@ -1,5 +1,6 @@
 use crate::error::{Kind, Result};
 use crate::uploader::credential::LoginInfo;
+use reqwest::header::{HeaderMap, HeaderValue, COOKIE};
 use serde::ser::Error;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -9,6 +10,7 @@ use std::str::FromStr;
 use std::time::Duration;
 use tracing::info;
 use typed_builder::TypedBuilder;
+use chrono::{Utc, DateTime};
 
 #[derive(clap::Args, Serialize, Deserialize, Debug, TypedBuilder)]
 #[builder(field_defaults(default))]
@@ -115,7 +117,7 @@ pub struct Studio {
 
     #[clap(long)]
     #[serde(default)]
-    pub up_close_reply: bool,
+    pub up_close_reply: Option<bool>,
 
     #[clap(long)]
     #[serde(default)]
@@ -221,13 +223,51 @@ pub struct BiliBili {
 
 impl BiliBili {
     pub async fn submit(&self, studio: &Studio) -> Result<ResponseData> {
+        let bili_jct: Option<String> = (|| {
+            self.login_info.cookie_info.get("cookies").and_then(|v| v.as_array()).and_then(|cookies| {
+                cookies.iter().find_map(|cookie| {
+                    if cookie.get("name").and_then(|n| n.as_str()) == Some("bili_jct") {
+                        cookie.get("value").and_then(|v| v.as_str()).map(|s| s.to_string())
+                    } else {
+                        None
+                    }
+                })
+            })
+        })();
+        let mut csrf = "csrf".to_string();
+        if let Some(value) = bili_jct {
+            csrf = value;
+        }
+
+        let mut web_headers = HeaderMap::new();
+        if let Value::Array(cookies) = &self.login_info.cookie_info["cookies"] {
+            let mut cookie_header_value = String::new();
+            for cookie in cookies {
+                if let (Some(name), Some(value)) = (cookie["name"].as_str(), cookie["value"].as_str()) {
+                    if !cookie_header_value.is_empty() {
+                        cookie_header_value.push_str("; ");
+                    }
+                    cookie_header_value.push_str(name);
+                    cookie_header_value.push('=');
+                    cookie_header_value.push_str(value);
+                }
+            }
+            web_headers.insert(COOKIE, HeaderValue::from_str(&cookie_header_value).unwrap());
+        }
+
+        let _now: DateTime<Utc> = Utc::now();
         let ret: ResponseData = reqwest::Client::builder()
-            .user_agent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/63.0.3239.108")
+            .user_agent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0")
+            .default_headers(web_headers)
             .timeout(Duration::new(60, 0))
             .build()?
+            // .post(format!(
+            //     "http://member.bilibili.com/x/vu/app/add?access_key={}",
+            //     self.login_info.token_info.access_token
+            // ))
             .post(format!(
-                "http://member.bilibili.com/x/vu/client/add?access_key={}",
-                self.login_info.token_info.access_token
+                "https://member.bilibili.com/x/vu/web/add/v3?csrf={}&t={}",
+                csrf, _now.timestamp_millis()
             ))
             .json(studio)
             .send()

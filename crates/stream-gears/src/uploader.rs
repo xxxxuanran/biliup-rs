@@ -60,6 +60,7 @@ pub struct StudioPre {
     no_reprint: u8,
     open_elec: u8,
     desc_v2_credit: Vec<PyCredit>,
+    up_close_reply: Option<bool>,
 }
 
 pub async fn upload(studio_pre: StudioPre) -> Result<ResponseData> {
@@ -86,6 +87,7 @@ pub async fn upload(studio_pre: StudioPre) -> Result<ResponseData> {
         no_reprint,
         open_elec,
         desc_v2_credit,
+        up_close_reply,
     } = studio_pre;
 
     let bilibili = login_by_cookies(&cookie_file).await;
@@ -164,6 +166,7 @@ pub async fn upload(studio_pre: StudioPre) -> Result<ResponseData> {
         .no_reprint(no_reprint)
         .open_elec(open_elec)
         .desc_v2(Some(desc_v2))
+        .up_close_reply(up_close_reply)
         .build();
 
     if !studio.cover.is_empty() {

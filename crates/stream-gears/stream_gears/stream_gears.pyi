@@ -133,24 +133,26 @@ class UploadLine(Enum):
     """Bldsa"""
 
 
-def upload(video_path: List[str],
-           cookie_file: str,
-           title: str,
-           tid: int,
-           tag: str,
-           copyright: int,
-           source: str,
-           desc: str,
-           dynamic: str,
-           cover: str,
-           dolby: int,
-           lossless_music: int,
-           no_reprint: int,
-           open_elec: int,
-           limit: int,
-           desc_v2: List[Credit],
-           dtime: Optional[int],
-           line: Optional[UploadLine]) -> None:
+def upload(
+        video_path: List[str],
+        cookie_file: str,
+        title: str,
+        tid: int,
+        tag: str,
+        copyright: int,
+        source: str,
+        desc: str,
+        dynamic: str,
+        cover: str,
+        dolby: int,
+        lossless_music: int,
+        no_reprint: int,
+        open_elec: int,
+        limit: int,
+        desc_v2: List[Credit],
+        up_close_reply: Optional[bool],
+        dtime: Optional[int],
+        line: Optional[UploadLine]) -> None:
     """
     上传视频稿件
 
@@ -170,6 +172,7 @@ def upload(video_path: List[str],
     :param int open_elec: 是否开启充电, 0-关闭 1-开启
     :param int limit: 单视频文件最大并发数
     :param List[Credit] desc_v2: 视频简介v2
-    :param Optional[dtime] int dtime: 定时发布时间, 距离提交大于2小时小于15天, 格式为10位时间戳
+    :param Optional[bool] up_close_reply: 是否关闭评论
+    :param Optional[int] dtime: 定时发布时间, 距离提交大于2小时小于15天, 格式为10位时间戳
     :param Optional[UploadLine] line: 上传线路
     """

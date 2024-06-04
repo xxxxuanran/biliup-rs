@@ -210,6 +210,7 @@ fn upload(
     open_elec: u8,
     limit: usize,
     desc_v2: Vec<PyCredit>,
+    up_close_reply: Option<bool>,
     dtime: Option<u32>,
     line: Option<UploadLine>,
 ) -> PyResult<()> {
@@ -258,6 +259,7 @@ fn upload(
                 .no_reprint(no_reprint)
                 .open_elec(open_elec)
                 .desc_v2_credit(desc_v2)
+                .up_close_reply(up_close_reply)
                 .build();
 
             match rt.block_on(uploader::upload(studio_pre)) {
