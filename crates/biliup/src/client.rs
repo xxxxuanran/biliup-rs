@@ -1,7 +1,7 @@
 use crate::retry;
 use rand::Rng;
 use reqwest::header::HeaderMap;
-use reqwest::{header, Response};
+use reqwest::{header, Response, Error};
 use reqwest_cookie_store::CookieStoreMutex;
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use reqwest_retry::policies::ExponentialBackoff;
@@ -37,12 +37,43 @@ impl StatelessClient {
         }
     }
 
+    pub async fn get(&self, url: &str, retry: usize, timeout: Duration) -> reqwest::Result<Response> {
+        let mut attempts = 0;
+        loop {
+            attempts += 1;
+            let result = tokio::time::timeout(timeout, self.client.get(url)
+                .headers(self.headers.clone())
+                .send()).await;
+
+            match result {
+                Ok(Ok(resp)) => {
+                    if resp.status().is_success() {
+                        return Ok(resp);
+                    } else {
+                        let _ = resp.error_for_status_ref();
+                    }
+                }
+                Ok(Err(e)) => {
+                    if attempts >= retry {
+                        return Err(e);
+                    }
+                }
+                Err(_) => {
+                    if attempts >= retry {
+                        return Err(reqwest::Error::new(reqwest::StatusCode::REQUEST_TIMEOUT, Some("Request timed out")));
+                    }
+                }
+            }
+        }
+    }
+
+
     pub async fn retryable(&self, url: &str) -> reqwest::Result<Response> {
-        let resp = retry(|| {
+        let resp: Response = retry(|| {
             self.client
                 .get(url)
                 .headers(self.headers.clone())
-                // .timeout(Duration::MAX)
+                // .timeout(Duration::from_secs(60))
                 // .header(ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                 // .header(ACCEPT_ENCODING, "gzip, deflate")
                 // .header(ACCEPT_LANGUAGE, "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
@@ -76,7 +107,6 @@ impl StatefulClient {
                 )
                 .default_headers(headers)
                 .connect_timeout(Duration::from_secs(60))
-                // .timeout(Duration::new(60, 0))
                 .build()
                 .unwrap(),
             cookie_store,

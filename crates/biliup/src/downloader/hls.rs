@@ -17,21 +17,19 @@ pub async fn download(
     mut splitting: Segmentable,
 ) -> Result<()> {
     info!("Downloading {}...", url);
-    let resp = client.retryable(url).await?;
+    let resp: reqwest::Response = client.retryable(url).await?;
     info!("{}", resp.status());
-    // let mut resp = resp.bytes_stream();
     let bytes = resp.bytes().await?;
     let mut ts_file = TsFile::new(file)?;
 
-    let mut media_url = Url::parse(url)?;
-    let mut pl = match m3u8_rs::parse_playlist(&bytes) {
+    let mut media_url: Url = Url::parse(url)?;
+    let mut pl: m3u8_rs::MediaPlaylist = match m3u8_rs::parse_playlist(&bytes) {
         Ok((_i, Playlist::MasterPlaylist(pl))) => {
             info!("Master playlist:\n{:#?}", pl);
             media_url = media_url.join(&pl.variants[0].uri)?;
             info!("media url: {media_url}");
             let resp = client.retryable(media_url.as_str()).await?;
             let bs = resp.bytes().await?;
-            // println!("{:?}", bs);
             if let Ok((_, pl)) = m3u8_rs::parse_media_playlist(&bs) {
                 pl
             } else {
@@ -48,6 +46,7 @@ pub async fn download(
         Err(e) => panic!("Parsing error: \n{}", e),
     };
     let mut previous_last_segment = 0;
+    let mut repeated_segment_count = 0; // 新增计数器
     loop {
         if pl.segments.is_empty() {
             info!("Segments array is empty - stream finished");
@@ -56,14 +55,11 @@ pub async fn download(
         let mut seq = pl.media_sequence;
         for segment in &pl.segments {
             if seq > previous_last_segment {
-                if (previous_last_segment > 0) && (seq > (previous_last_segment + 1)) {
-                    warn!("SEGMENT INFO SKIPPED");
-                }
+                repeated_segment_count = 0; // 重置计数器
                 debug!("Yield segment");
                 if segment.discontinuity {
                     warn!("#EXT-X-DISCONTINUITY");
                     ts_file.create_new()?;
-                    // splitting = Segment::from_seg(splitting);
                     splitting.reset();
                 }
                 let length = download_to_file(
@@ -79,8 +75,17 @@ pub async fn download(
                     splitting.reset();
                 }
                 previous_last_segment = seq;
+            } else {
+                repeated_segment_count += 1;
+                if repeated_segment_count >= 5 {
+                    info!("Reached 5 repeated segments, exiting download.");
+                    break; // 仅退出循环
+                }
             }
             seq += 1;
+        }
+        if repeated_segment_count >= 5 {
+            break; // 确保在外层循环也能正确退出
         }
         let resp = client.retryable(media_url.as_str()).await?;
         let bs = resp.bytes().await?;

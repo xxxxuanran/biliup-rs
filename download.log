@@ -1,0 +1,108 @@
+2024-08-17 22:57:22 ERROR biliup::downloader: Parsing Error: Error { input: [35, 69, 88, 84, 77, 51, 85, 13, 10], code: Tag }
+2024-08-17 22:57:22  INFO biliup::downloader::hls: Downloading https://live-global-cdn-v02.afreecatv.com/live-stmc-22/auth_playlist.m3u8?aid=.A32.7bbT56vyHM9fKZk.H-BM2W3YuuBlm8C46rvXXhU2NzpaS1FBptAdxkFSDPaYiJIuYMXJScGuHi1QPu53yh2YuzjgwhIGkJQ0XLB5P8OMy_oMyhbFdSCzLARwvtM...
+2024-08-17 22:58:52  INFO biliup::downloader::hls: 200 OK
+2024-08-17 22:58:52  INFO biliup::downloader::util: Save to test2024-08-17T22_58_52.ts.part
+2024-08-17 22:58:52  INFO biliup::downloader::hls: create file test2024-08-17T22_58_52.ts.part
+2024-08-17 22:58:52  INFO biliup::downloader::hls: Media playlist:
+MediaPlaylist {
+    version: Some(
+        3,
+    ),
+    target_duration: 1.0,
+    media_sequence: 7503,
+    segments: [
+        MediaSegment {
+            uri: "1920x1080/275393192-common-original-hls_7502_0000000C002000AC0A7251EAF8CA5FD9.TS",
+            duration: 1.989,
+            title: None,
+            byte_range: None,
+            discontinuity: false,
+            key: None,
+            map: None,
+            program_date_time: None,
+            daterange: None,
+            unknown_tags: [
+                ExtTag {
+                    tag: "X-ALLOW-CACHE",
+                    rest: Some(
+                        "NO",
+                    ),
+                },
+                ExtTag {
+                    tag: "X-FIRST-SEGMENT-TIMESTAMP",
+                    rest: Some(
+                        "147732240000",
+                    ),
+                },
+            ],
+        },
+        MediaSegment {
+            uri: "1920x1080/275393192-common-original-hls_7503_000000A500AC00BFA4DED8A4A91048E6.TS",
+            duration: 1.982,
+            title: None,
+            byte_range: None,
+            discontinuity: false,
+            key: None,
+            map: None,
+            program_date_time: None,
+            daterange: None,
+            unknown_tags: [],
+        },
+        MediaSegment {
+            uri: "1920x1080/275393192-common-original-hls_7504_0000004E0048005F20178C7E7B93B23B.TS",
+            duration: 1.977,
+            title: None,
+            byte_range: None,
+            discontinuity: false,
+            key: None,
+            map: None,
+            program_date_time: None,
+            daterange: None,
+            unknown_tags: [],
+        },
+        MediaSegment {
+            uri: "1920x1080/275393192-common-original-hls_7505_0000009E00DD004B1D350E67D137D033.TS",
+            duration: 1.971,
+            title: None,
+            byte_range: None,
+            discontinuity: false,
+            key: None,
+            map: None,
+            program_date_time: None,
+            daterange: None,
+            unknown_tags: [],
+        },
+        MediaSegment {
+            uri: "1920x1080/275393192-common-original-hls_7506_000000AB00D300757B14E1A4026662A6.TS",
+            duration: 1.987,
+            title: None,
+            byte_range: None,
+            discontinuity: false,
+            key: None,
+            map: None,
+            program_date_time: None,
+            daterange: None,
+            unknown_tags: [],
+        },
+        MediaSegment {
+            uri: "1920x1080/275393192-common-original-hls_7507_00000089005600D48BC648444080BE34.TS",
+            duration: 1.98,
+            title: None,
+            byte_range: None,
+            discontinuity: false,
+            key: None,
+            map: None,
+            program_date_time: None,
+            daterange: None,
+            unknown_tags: [],
+        },
+    ],
+    discontinuity_sequence: 0,
+    end_list: false,
+    playlist_type: None,
+    i_frames_only: false,
+    start: None,
+    independent_segments: false,
+    unknown_tags: [],
+}
+2024-08-17 22:58:52  INFO biliup::downloader::hls: index 7503
