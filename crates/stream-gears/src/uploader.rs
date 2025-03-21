@@ -19,17 +19,13 @@ use typed_builder::TypedBuilder;
 #[pyclass]
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum UploadLine {
-    Bda2,
-    Ws,
-    Qn,
-    // Kodo,
-    // Cos,
-    // CosInternal,
     Bldsa,
+    Bda2,
     Tx,
     Txa,
-    Bda,
     Alia,
+    Qn,
+    Bda,
 }
 
 #[derive(FromPyObject)]
@@ -51,7 +47,6 @@ pub struct StudioPre {
     title: String,
     tid: u16,
     tag: String,
-    topic_id: Option<u32>,
     copyright: u8,
     source: String,
     desc: String,
@@ -74,10 +69,6 @@ pub struct StudioPre {
 }
 
 pub async fn upload(studio_pre: StudioPre, proxy: Option<&str>) -> Result<ResponseData> {
-    // let file = std::fs::File::options()
-    //     .read(true)
-    //     .write(true)
-    //     .open(&cookie_file);
     let StudioPre {
         video_path,
         cookie_file,
@@ -86,7 +77,6 @@ pub async fn upload(studio_pre: StudioPre, proxy: Option<&str>) -> Result<Respon
         title,
         tid,
         tag,
-        topic_id,
         copyright,
         source,
         desc,
@@ -113,17 +103,13 @@ pub async fn upload(studio_pre: StudioPre, proxy: Option<&str>) -> Result<Respon
     let client = StatelessClient::default();
     let mut videos = Vec::new();
     let line = match line {
+        Some(UploadLine::Bldsa) => line::bldsa(),
         Some(UploadLine::Bda2) => line::bda2(),
-        Some(UploadLine::Ws) => line::ws(),
-        Some(UploadLine::Qn) => line::qn(),
-        // Some(UploadLine::Kodo) => line::kodo(),
-        // Some(UploadLine::Cos) => line::cos(),
-        // Some(UploadLine::CosInternal) => line::cos_internal(),
-        Some(UploadLine::Bda) => line::bda(),
         Some(UploadLine::Tx) => line::tx(),
         Some(UploadLine::Txa) => line::txa(),
-        Some(UploadLine::Bldsa) => line::bldsa(),
         Some(UploadLine::Alia) => line::alia(),
+        Some(UploadLine::Qn) => line::qn(),
+        Some(UploadLine::Bda) => line::bda(),
         None => Probe::probe(&client.client).await.unwrap_or_default(),
     };
     for video_path in video_path {
@@ -171,7 +157,6 @@ pub async fn upload(studio_pre: StudioPre, proxy: Option<&str>) -> Result<Respon
         .dynamic(dynamic)
         .source(source)
         .tag(tag)
-        .topic_id(topic_id)
         .tid(tid)
         .title(title)
         .videos(videos)
@@ -198,10 +183,6 @@ pub async fn upload(studio_pre: StudioPre, proxy: Option<&str>) -> Result<Respon
 }
 
 pub async fn upload_by_app(studio_pre: StudioPre, proxy: Option<&str>) -> Result<ResponseData> {
-    // let file = std::fs::File::options()
-    //     .read(true)
-    //     .write(true)
-    //     .open(&cookie_file);
     let StudioPre {
         video_path,
         cookie_file,
@@ -210,7 +191,6 @@ pub async fn upload_by_app(studio_pre: StudioPre, proxy: Option<&str>) -> Result
         title,
         tid,
         tag,
-        topic_id,
         copyright,
         source,
         desc,
@@ -239,17 +219,13 @@ pub async fn upload_by_app(studio_pre: StudioPre, proxy: Option<&str>) -> Result
     let client = StatelessClient::default();
     let mut videos = Vec::new();
     let line = match line {
+        Some(UploadLine::Bldsa) => line::bldsa(),
         Some(UploadLine::Bda2) => line::bda2(),
-        Some(UploadLine::Ws) => line::ws(),
-        Some(UploadLine::Qn) => line::qn(),
-        // Some(UploadLine::Kodo) => line::kodo(),
-        // Some(UploadLine::Cos) => line::cos(),
-        // Some(UploadLine::CosInternal) => line::cos_internal(),
-        Some(UploadLine::Bda) => line::bda(),
         Some(UploadLine::Tx) => line::tx(),
         Some(UploadLine::Txa) => line::txa(),
-        Some(UploadLine::Bldsa) => line::bldsa(),
         Some(UploadLine::Alia) => line::alia(),
+        Some(UploadLine::Qn) => line::qn(),
+        Some(UploadLine::Bda) => line::bda(),
         None => Probe::probe(&client.client).await.unwrap_or_default(),
     };
     for video_path in video_path {
@@ -297,7 +273,6 @@ pub async fn upload_by_app(studio_pre: StudioPre, proxy: Option<&str>) -> Result
         .dynamic(dynamic)
         .source(source)
         .tag(tag)
-        .topic_id(topic_id)
         .tid(tid)
         .title(title)
         .videos(videos)

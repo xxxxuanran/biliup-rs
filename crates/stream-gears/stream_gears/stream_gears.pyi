@@ -113,62 +113,50 @@ def login_by_web_qrcode(sess_data: str, dede_user_id: str, proxy: Optional[str])
 class UploadLine(Enum):
     """上传线路"""
 
-    Bda2 = 1
-    """百度upos"""
+    Bldsa = 1
+    """B站自建"""
 
-    Ws = 2
-    """网宿upos"""
+    Bda2 = 2
+    """百度云"""
 
-    Qn = 3
-    """七牛upos"""
-
-    # Kodo = 4
-    # """七牛bupfetch"""
-
-    # Cos = 5
-    # """腾讯bupfetch"""
-
-    # CosInternal = 6
-    # """上海腾讯云内网"""
-
-    Bda = 4
-    """百度云海外"""
-
-    Tx = 5
+    Tx = 3
     """腾讯云EO"""
 
-    Txa = 6
+    Txa = 4
     """腾讯云EO海外"""
 
-    Bldsa = 7
-    """Bldsa"""
+    Alia = 5
+    """阿里云海外"""
 
-    Alia = 8
-    """阿里云upos"""
+    Qn = 6
+    """七牛"""
 
+    Bda = 7
+    """百度云海外"""
 
-def upload(video_path: List[str],
-           cookie_file: str,
-           title: str,
-           tid: int,
-           tag: str,
-           topic_id: Optional[int],
-           copyright: int,
-           source: str,
-           desc: str,
-           dynamic: str,
-           cover: str,
-           dolby: int,
-           lossless_music: int,
-           no_reprint: int,
-           open_elec: int,
-           limit: int,
-           desc_v2: List[Credit],
-           dtime: Optional[int],
-           line: Optional[UploadLine],
-           extra_fields: Optional[str],
-           proxy: Optional[str]) -> None:
-    
+def upload(
+        video_path: List[str],
+        cookie_file: str,
+        title: str,
+        tid: int,
+        tag: str,
+        copyright: int,
+        source: str,
+        desc: str,
+        dynamic: str,
+        cover: str,
+        dolby: int,
+        lossless_music: int,
+        no_reprint: int,
+        open_elec: int,
+        limit: int,
+        desc_v2: List[Credit],
+        dtime: Optional[int],
+        line: Optional[UploadLine],
+        extra_fields: Optional[str],
+        proxy: Optional[str]
+    ) -> None:
+
     """
     上传视频稿件
 
@@ -177,7 +165,6 @@ def upload(video_path: List[str],
     :param str title: 视频标题
     :param int tid: 投稿分区
     :param str tag: 视频标签, 英文逗号分隔多个tag
-    :param Optional[int] topic_id: 话题ID
     :param int copyright: 是否转载, 1-自制 2-转载
     :param str source: 转载来源
     :param str desc: 视频简介
@@ -195,30 +182,31 @@ def upload(video_path: List[str],
     :param Optional[str] proxy: 代理
     """
 
-def upload_by_app(video_path: List[str],
-           cookie_file: str,
-           title: str,
-           tid: int,
-           tag: str,
-           topic_id: Optional[int],
-           copyright: int,
-           source: str,
-           desc: str,
-           dynamic: str,
-           cover: str,
-           dolby: int,
-           lossless_music: int,
-           no_reprint: int,
-           open_elec: int,
-           up_close_reply: bool,
-           up_selection_reply: bool,
-           up_close_danmu:bool,
-           limit: int,
-           desc_v2: List[Credit],
-           dtime: Optional[int],
-           line: Optional[UploadLine],
-           extra_fields: Optional[str],
-           proxy: Optional[str]) -> None:
+def upload_by_app(
+        video_path: List[str],
+        cookie_file: str,
+        title: str,
+        tid: int,
+        tag: str,
+        copyright: int,
+        source: str,
+        desc: str,
+        dynamic: str,
+        cover: str,
+        dolby: int,
+        lossless_music: int,
+        no_reprint: int,
+        open_elec: int,
+        up_close_reply: bool,
+        up_selection_reply: bool,
+        up_close_danmu: bool,
+        limit: int,
+        desc_v2: List[Credit],
+        dtime: Optional[int],
+        line: Optional[UploadLine],
+        extra_fields: Optional[str],
+        proxy: Optional[str]
+    ) -> None:
     """
     上传视频稿件
 
@@ -227,7 +215,6 @@ def upload_by_app(video_path: List[str],
     :param str title: 视频标题
     :param int tid: 投稿分区
     :param str tag: 视频标签, 英文逗号分隔多个tag
-    :param Optional[int] topic_id: 话题ID
     :param int copyright: 是否转载, 1-自制 2-转载
     :param str source: 转载来源
     :param str desc: 视频简介
